@@ -66,7 +66,7 @@ export const Login = () => {
                   <form onSubmit={handleInputLogin}>
                     <div className="form-group">
                       <label htmlFor="">Email address</label>
-                      <input type="email" name="username"  onChange={handleInputChange} className="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter email" />
+                      <input type="text" name="username"  onChange={handleInputChange} className="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter email" />
                     </div>
                     <div className="form-group">
                       <label htmlFor="password">Password</label>
