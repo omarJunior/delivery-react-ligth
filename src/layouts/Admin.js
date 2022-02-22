@@ -79,7 +79,7 @@ function Admin() {
     localStorage.removeItem(fullname)
     localStorage.removeItem(token)
     localStorage.removeItem(rol)
-    window.location = "/"
+    window.location = "/admin"
   }
 
   return (
