@@ -6,9 +6,16 @@ export default class AxiosApi{
         this.url_principal = url_principal
     }
     
-    async getAllAxios(url_api){
-        const data = await axios.get(`${this.url_principal}/${url_api}`)
-        const resp = await data.data
+    async getAllAxios(url_api, headers = {}){
+        let resp = ""
+        if(Object.keys(headers).length === 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}`)
+            resp = await data.data
+        }
+        if(Object.keys(headers).length > 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}`, { headers: headers })
+            resp = await data.data
+        }
         return resp
     }
 
