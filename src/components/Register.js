@@ -40,7 +40,22 @@ const [data_identificacion, setData_identificacion] = useState([])
       axios_api.postAxios('api/appPersona/persona/register_persona', data_register, headers)
       .then(function(resp){
         const data = resp
-        console.log(data)
+        if(data.msg){
+            Swal.fire({
+                icon:'success',
+                text: data.msg,
+                timer:1500
+            }
+            )
+            return setTimeout(()=>{
+                window.location = "/admin"
+            }, 2000)
+        }else{
+            return Swal.fire({
+                icon:'error',
+                text: data.error
+            })
+        }
       })
   }
 
@@ -119,9 +134,14 @@ const [data_identificacion, setData_identificacion] = useState([])
                         }
                     </select>
                 </div>
+
+                <div className="form-group col-md-3">
+                    <label>Usuario</label>
+                    <input type="text" name="username" onChange={handleInputChange} className="form-control" placeholder="Ingresa tu usuario" />
+                </div>
             </div>
             <button type="submit" className="btn btn-dark">Sign in</button>  
-            <Link to="/admin">Registrarse</Link>
+            <Link to="/admin">Login</Link>
 
         </form>
     </div>
