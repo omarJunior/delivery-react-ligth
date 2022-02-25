@@ -19,9 +19,30 @@ export default class AxiosApi{
         return resp
     }
 
-    async getOneAxios(url_api, id){
-        const data = await axios.get(`${this.url_principal}/${url_api}/${id}`)
-        const resp = await data.data
+    async getOneAxios(url_api, id, headers = {}){
+        let resp = ""
+        if(Object.keys(headers).length === 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}/${id}`)
+            resp = await data.data
+        }
+        if(Object.keys(headers).length > 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}/${id}`, { headers : headers })
+            resp = await data.data
+        }
+        return resp
+    }
+
+    //parametro por url
+    async getOneAxiosParams(url_api, parametro, id, headers = {}){
+        let resp = ""
+        if(Object.keys(headers).length === 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}/?${parametro}=${id}`)
+            resp = await data.data
+        }
+        if(Object.keys(headers).length > 0){
+            const data = await axios.get(`${this.url_principal}/${url_api}/?${parametro}=${id}`, { headers : headers })
+            resp = await data.data
+        }
         return resp
     }
 
