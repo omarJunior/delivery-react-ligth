@@ -2,8 +2,8 @@
 import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import ciudades from 'utils/ciudades'
 import AxiosApi from '../utils/api'
-
 
 export const Register = () => { 
 
@@ -15,21 +15,21 @@ const [data_rol, setData_rol] = useState([])
 const [data_identificacion, setData_identificacion] = useState([])
 
   useEffect(()=>{
-      axios_api.getAllAxios('api/appPersona/persona/get_grupos')
-      .then(function(resp){
-        const data = resp
-        setData_rol(data)
-      })
-      .catch(console.error)
-  }, [])
 
-  useEffect(()=>{
-      axios_api.getAllAxios('api/appConfiguracion/tipo-identificacion/')
-      .then(function(resp){
+    axios_api.getAllAxios('api/appPersona/persona/get_grupos')
+    .then(function(resp){
+      const data = resp
+      setData_rol(data)
+    })
+        .catch(console.error)
+    
+    axios_api.getAllAxios('api/appConfiguracion/tipo-identificacion/')
+    .then(function(resp){
         const data = resp
         setData_identificacion(data)
-      })
+    })
       .catch(console.error)
+    
   }, [])
 
   const handleRegister = (event)=>{
@@ -37,6 +37,7 @@ const [data_identificacion, setData_identificacion] = useState([])
       const headers = {
           'Content-Type': 'application/json'
         }
+    
       axios_api.postAxios('api/appPersona/persona/register_persona', data_register, headers)
       .then(function(resp){
         const data = resp
@@ -72,11 +73,11 @@ const [data_identificacion, setData_identificacion] = useState([])
             <div className="form-row">
                 <div className="form-group col-md-3">
                     <label>Nombres</label>
-                    <input type="text" name="nombres" onChange={handleInputChange} className="form-control" placeholder="Ingresa tus nombres"/>
+                    <input type="text" name="nombres" onChange={handleInputChange} className="form-control" placeholder="Ingresa tus nombres" required/>
                 </div>
                 <div className="form-group col-md-3">
                     <label>Apellidos</label>
-                    <input type="text" name="apellidos" onChange={handleInputChange} className="form-control" placeholder="Ingresa tus apellidos" />
+                    <input type="text" name="apellidos" onChange={handleInputChange} className="form-control" placeholder="Ingresa tus apellidos" required/>
                 </div>
 
                 <div className="form-group col-md-3">
@@ -136,10 +137,36 @@ const [data_identificacion, setData_identificacion] = useState([])
                 </div>
 
                 <div className="form-group col-md-3">
+                    <label>Ciudad</label>
+                    <select defaultValue={'DEFAULT'} name="ciudad" onChange={handleInputChange} className='form-control'>
+                     <option value="DEFAULT" disabled>--Seleccione una ciudad--</option>
+                        {
+                            ciudades.map((item ,key)=>{
+                                return <option key={key} value={item.valor}>{item.ciudad}</option>
+                            })
+                        }
+                    </select>
+                </div>
+
+                <div className="form-group col-md-3">
                     <label>Usuario</label>
                     <input type="text" name="username" onChange={handleInputChange} className="form-control" placeholder="Ingresa tu usuario" />
                 </div>
             </div>
+
+            <div className="form-row">
+                <div className="form-group col-md-4">
+                    <label>Descripcion</label>
+                    <textarea name="descripcion" onChange={handleInputChange} className="form-control" placeholder="Ingresa una descripcion..."></textarea>
+                </div>
+
+                <div className="form-group col-md-3">
+                    <label>Codigo postal</label>
+                    <input type="text" name="codigo_postal" onChange={handleInputChange} className="form-control" placeholder="Ingresa el codigo postal" />
+                </div>
+               
+            </div>
+
             <button type="submit" className="btn btn-dark">Sign in</button>  
             <Link to="/admin">Login</Link>
 
