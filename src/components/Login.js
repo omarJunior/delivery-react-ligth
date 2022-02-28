@@ -4,7 +4,7 @@ import AxiosApi from '../utils/api'
 import Swal from 'sweetalert2'
 
 export const Login = () => {
-  const urlStatic = "http://localhost:8001"
+  const urlStatic = "http://localhost:8080"
   const axios_api = new AxiosApi(urlStatic)
 
   const [data_login, setData_login] = useState({})
