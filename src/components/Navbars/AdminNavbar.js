@@ -16,7 +16,7 @@
 
 */
 import React, { Component } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Navbar, Container, Nav, Dropdown, Button } from "react-bootstrap";
 
 import routes from "routes.js";
@@ -184,7 +184,7 @@ function Header({full_name, cerrarSesion}) {
               <Nav.Link
                 className="m-0"
               >
-                <span className="no-icon">Account</span>
+                <span className="no-icon"><Link to="/admin/user">Account</Link></span>
               </Nav.Link>
             </Nav.Item>
           </Nav>
