@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ChartistGraph from "react-chartist";
 // react-bootstrap components
 import {
@@ -16,7 +16,53 @@ import {
   Tooltip,
 } from "react-bootstrap";
 
+import AxiosApi from "utils/api";
+
 function Dashboard() {
+
+  const urlStatic = "http://localhost:8080"
+  const axios_api = new AxiosApi(urlStatic)
+
+  const [ facturas, set_facturas ] = useState({})
+  const [ productos, set_productos ] = useState({})
+  const [ clientes, set_clientes ] = useState({})
+
+
+  useEffect(()=>{
+    const token = (localStorage.getItem('token')) ? JSON.parse(localStorage.getItem('token')) : ""
+    const id = (localStorage.getItem('id')) ? JSON.parse(localStorage.getItem('id')) : ""
+
+    const headers = {
+      //Token de authenticacion
+      'Authorization': `Bearer ${token}`,
+    }
+
+    axios_api.getAllAxios('api/appPersona/cliente/get_clientes/', headers)
+    .then( function(resp){
+      const data = resp
+      set_clientes(data)
+    })
+    .catch(console.error)
+
+    /* *************** */
+    axios_api.getAllAxios('api/appFactura/producto/get_productos/', headers)
+    .then(function(resp){
+      const data = resp
+      set_productos(data)
+    })  
+    .catch(console.error)
+
+    /* *************** */
+    axios_api.getAllAxios('api/appFactura/factura/get_factura/', headers)
+    .then(function(resp){
+      const data = resp
+      set_facturas(data)
+    })  
+    .catch(console.error)
+
+
+  }, [])
+
   return (
     <>
       <Container fluid>
@@ -32,8 +78,8 @@ function Dashboard() {
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Number</p>
-                      <Card.Title as="h4">150GB</Card.Title>
+                      <p className="card-category">Productos</p>
+                      <Card.Title as="h4">{productos.productos}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -53,13 +99,13 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-light-3 text-success"></i>
+                      <i className="nc-icon nc-single-copy-04 text-success"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <Card.Title as="h4">$ 1,345</Card.Title>
+                      <p className="card-category">Facturas</p>
+                      <Card.Title as="h4">{facturas.facturas}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -79,13 +125,13 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger"></i>
+                      <i className="nc-icon nc-badge text-danger"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <Card.Title as="h4">23</Card.Title>
+                      <p className="card-category">Clientes</p>
+                      <Card.Title as="h4">{clientes.clientes}</Card.Title>
                     </div>
                   </Col>
                 </Row>
@@ -105,12 +151,12 @@ function Dashboard() {
                 <Row>
                   <Col xs="5">
                     <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary"></i>
+                      <i className="nc-icon nc-cart-simple text-primary"></i>
                     </div>
                   </Col>
                   <Col xs="7">
                     <div className="numbers">
-                      <p className="card-category">Followers</p>
+                      <p className="card-category">total</p>
                       <Card.Title as="h4">+45K</Card.Title>
                     </div>
                   </Col>
