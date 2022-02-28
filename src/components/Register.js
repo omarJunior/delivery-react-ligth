@@ -7,7 +7,7 @@ import AxiosApi from '../utils/api'
 
 export const Register = () => { 
 
-const urlStatic = "http://localhost:8001"
+const urlStatic = "http://localhost:8080"
 const axios_api = new AxiosApi(urlStatic)
 
 const [data_register, setData_register] = useState({})
@@ -37,7 +37,7 @@ const [data_identificacion, setData_identificacion] = useState([])
       const headers = {
           'Content-Type': 'application/json'
         }
-    
+  
       axios_api.postAxios('api/appPersona/persona/register_persona', data_register, headers)
       .then(function(resp){
         const data = resp
