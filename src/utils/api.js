@@ -58,9 +58,16 @@ export default class AxiosApi{
         return resp
     }
 
-    async deleteAxios(url_api, id){
-        const data = await axios.delete(`${this.url_principal}/${url_api}/${id}`)
-        const resp = await data.status
+    async deleteAxios(url_api, id, headers = {}){
+        let resp = ""
+        if(Object.keys(headers).length === 0){
+            const data = await axios.delete(`${this.url_principal}/${url_api}/${id}`)
+            resp = await data.status
+        }
+        if(Object.keys(headers).length > 0 ){
+            const data = await axios.delete(`${this.url_principal}/${url_api}/${id}`, { headers: headers })
+            resp = await data.status
+        }
         return resp
     }
 
