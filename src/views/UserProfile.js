@@ -10,11 +10,12 @@ import ciudades from "utils/ciudades";
 
 function User() {
 
-const urlStatic = "http://localhost:8001"
+const urlStatic = "http://localhost:8080"
 const axios_api = new AxiosApi(urlStatic)
 
   const [ data_profile, setData_profile ] = useState({})
   const [token_, setToken] = useState("")
+  const [ tipo_identificacion, setTipo_identificacion ] = useState([])
 
   useEffect(()=>{
     const token = (localStorage.getItem('token')) ? JSON.parse(localStorage.getItem('token')) : ""
@@ -32,6 +33,16 @@ const axios_api = new AxiosApi(urlStatic)
     })
     .catch(console.error)
 
+    /* *********** */
+    axios_api.getAllAxios('api/appConfiguracion/tipo-identificacion/')
+    .then( function(resp){
+      const data = resp
+      setTipo_identificacion(data)
+    })
+    .catch(console.error)
+
+    /* ********* */
+
   }, [])
 
   const handleInputChange = (e)=>{
@@ -43,14 +54,30 @@ const axios_api = new AxiosApi(urlStatic)
 
   const handleUpdatedProfile = (e)=>{
     e.preventDefault()
-    console.log(data_profile)
-    console.log(token_)
-    /* const headers = {
+    const headers = {
+      'Content-Type': 'application/json',
       //Token de authenticacion
-      'Authorization': `Bearer ${token}`,
-    } */
-    
-    //axios_api.putAxios("api/appPersona/user", data_profile.id, data_profile, )
+      'Authorization': `Bearer ${token_}`,
+    }
+
+    axios_api.postAxios("api/appPersona/user/updated_user", data_profile, headers)
+    .then( function(resp){
+      const data = resp;
+      if(data.msg){
+        return Swal.fire({
+          icon:'success',
+          text: data.msg,
+          timer: 2000
+        })
+      }else{
+        return Swal.fire({
+          icon:'error',
+          text: data.error,
+          timer: 2000
+        })
+      }
+    })
+    .catch(console.error)
   }
 
   return (
@@ -133,14 +160,20 @@ const axios_api = new AxiosApi(urlStatic)
                   <Row>
                     <Col md="12">
                       <Form.Group>
-                        <label>Tipo de identificacion</label>
-                        <Form.Control
-                          defaultValue={data_profile.tipoIdentificacion}
+                        <label>Tipo de identificacion: <em style={{fontWeight:"bold", color: "gray", letterSpacing: "1px"}}>{data_profile.tipoIdentificacion}</em></label>
+                        <Form.Control as="select"
+                          defaultValue={'DEFAULT'}
                           onChange={handleInputChange}
                           name="tipoIdentificacion"
-                          placeholder="Tipo identificacion"
-                          type="text"
-                        ></Form.Control>
+                        >
+                          <option value="DEFAULT" disabled>--Seleccione una identificacion--</option>
+                          {
+                            tipo_identificacion.map((item, key)=>{
+                              return <option key={key} value={item.id}>{item.descripcion}</option>
+                            })
+                          }
+
+                        </Form.Control>
                       </Form.Group>
                     </Col>
                   </Row>
@@ -184,8 +217,13 @@ const axios_api = new AxiosApi(urlStatic)
 
                     <Col className="pl-3" md="4">
                       <Form.Group>
-                        <label>Ciudad</label>
-                        <Form.Control as="select" name="ciudad" custom onChange={handleInputChange} ref={data_profile.valor}>
+                        <label>Ciudad: <em style={{fontWeight:"bold", color: "gray", letterSpacing: "1px"}} >{data_profile.ciudad}</em></label>
+                        <Form.Control 
+                            as="select" 
+                            name="ciudad"
+                            onChange={handleInputChange}
+                            defaultValue={'DEFAULT'}>
+                          <option value="DEFAULT" disabled>--Seleccione una ciudad--</option>
                           {
                               ciudades.map((item ,key)=>{
                                   return <option key={key} value={item.valor}>{item.ciudad}</option>
