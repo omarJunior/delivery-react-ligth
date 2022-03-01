@@ -18,4 +18,14 @@ const ciudades = [
     { valor: 'sincelejo', ciudad:'Sincelejo'},
 ]
 
-export default ciudades
+const tamanios = [
+    {valor:'prequeño' , tamanio: 'Pequeño'},
+    {valor:'mediano' , tamanio: 'Mediano'},
+    {valor:'grande' , tamanio: 'Grande'}
+]
+
+
+export {
+    ciudades,
+    tamanios
+}
