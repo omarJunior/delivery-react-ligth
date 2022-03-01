@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
 // react-bootstrap components
-import {
-  Badge,
-  Button,
-  Card,
-  Navbar,
-  Nav,
-  Table,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Button, FormGroup, Modal, ModalBody, ModalFooter, Input, Label, ModalHeader} from 'reactstrap'
+import { Card, Table, Container, FormControl , Row, Col,} from "react-bootstrap";
 
 import AxiosApi from "utils/api";
 import Swal from "sweetalert2";
+import { tamanios } from "utils/ciudades";
 
 function TableList() {
 
@@ -24,6 +16,11 @@ function TableList() {
   const [ productos, setProductos ] = useState([])
   const [ facturas, setFacturas ] = useState([])
   const [ token_, setToken_ ] = useState([])
+  const [ modal_state_product, setModal_state_product ] = useState(false)
+  const [ modal_state_devoice, setModal_state_devoice ] = useState(false)
+  const [ data, setData ] = useState({})
+  const [ rubroData, setRubroData ] = useState([])
+  const [ stocksData, setStocksData ] = useState([])
 
   useEffect(()=>{
     const token = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')) : ""
@@ -46,7 +43,45 @@ function TableList() {
    } )
    .catch(console.error)
 
+    /* ************************ */ 
+    axios_api.getAllAxios('api/appConfiguracion/rubro/', headers)
+   .then( function(resp){
+     const data = resp
+     setRubroData(data)
+   } )
+
+   /* ************************ */ 
+   axios_api.getAllAxios('api/appConfiguracion/stock/', headers)
+   .then( function(resp){
+     const data = resp
+     setStocksData(data)
+   } )
+
   }, [])
+
+  const openModalProduct = ()=>{
+    setModal_state_product(true)
+  } 
+
+  const closeModalProduct = ()=>{
+    setModal_state_product(false)
+  }
+
+  const openModalDevoice = ()=>{
+    setModal_state_devoice(true)
+  } 
+
+  const closeModalDevoice = ()=>{
+    setModal_state_devoice(false)
+  }
+
+  const handleInputChange = (e)=>{
+    setData({
+      ...data,
+      [e.target.name]: e.target.value
+    })
+  }
+
 
   const handleDeleteProduct = (e, id)=>{ 
     e.preventDefault()
@@ -128,8 +163,136 @@ function TableList() {
     .catch(console.error)
   }
 
+  const handleSubmitProduct = (e)=>{
+    e.preventDefault()
+    const headers = {'Content-Type': 'application/json', 'Authorization': `Bearer ${token_}`}
+    axios_api.postAxios('api/appFactura/producto/register_producto', data, headers)
+    .then( function(resp){
+      const data = resp
+      console.log(data)
+    } )
+    .catch(console.error)
+  }
+
   return (
     <>
+      <div className="container mb-4">
+        <div style={{marginRight: '10px', display:'inline-block'}}>
+          <Button Button onClick={()=> openModalProduct()} className="btn btn-success">producto+</Button>
+            <Modal isOpen={modal_state_product} >
+                <ModalHeader>
+                    Inserta el producto!
+                </ModalHeader>
+                <ModalBody>
+                    <FormGroup>
+                        <Label for="placa">Descripcion</Label>
+                        <Input onChange={handleInputChange}  type="text" id="descripcion" name="descripcion"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="modelo">Costo</Label>
+                        <Input onChange={handleInputChange} type="text" id="costo" name="costo"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="marca">Precio sin iva</Label>
+                        <Input onChange={handleInputChange} type="number" id="precio_sin_iva" name="precio_sin_iva"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="color">Precio final</Label>
+                        <Input onChange={handleInputChange} type="number" id="precio_final" name="precio_final"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <FormControl 
+                            as="select" 
+                            name="id_rubro"
+                            onChange={handleInputChange}
+                            defaultValue={'DEFAULT'}>
+                            <option value="DEFAULT" disabled>--Seleccione un rubro--</option>
+                              {
+                                  rubroData.map((item ,key)=>{
+                                      return <option key={key} value={item.id}>{item.descripcion}</option>
+                                  })
+                              }
+                        </FormControl>
+                    </FormGroup>
+
+                    <FormGroup>
+                        <FormControl 
+                            as="select" 
+                            name="id_stock"
+                            onChange={handleInputChange}
+                            defaultValue={'DEFAULT'}>
+                            <option value="DEFAULT" disabled>--Seleccione un stock--</option>
+                              {
+                                  stocksData.map((item ,key)=>{
+                                      return <option key={key} value={item.id}>{item.stock}</option>
+                                  })
+                              }
+                        </FormControl>
+                    </FormGroup>
+                    <FormGroup>
+                      <FormControl 
+                          as="select" 
+                          name="tamanio"
+                          onChange={handleInputChange}
+                          defaultValue={'DEFAULT'}>
+                          <option value="DEFAULT" disabled>--Seleccione un tamaño--</option>
+                            {
+                                tamanios.map((item ,key)=>{
+                                    return <option key={key} value={item.valor}>{item.tamanio}</option>
+                                })
+                            }
+                        </FormControl>
+                    </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                    <Button type="submit" className="btn btn-dark" onClick={(e)=> handleSubmitProduct(e)}>Insertar datos</Button>
+                    <Button className="btn btn-dark" onClick={closeModalProduct}>Cerrar</Button>
+                </ModalFooter>
+            </Modal>
+        </div>
+
+
+        <div style={{marginRight: '10px', display:'inline-block'}}>
+          <Button Button onClick={()=> openModalDevoice()} className="btn btn-success">factura+</Button>  
+         {/*  <Modal isOpen={modal_state_devoice} >
+                <ModalHeader>
+                    Inserta la factura!
+                </ModalHeader>
+                <ModalBody>
+                    <FormGroup>
+                        <Label for="placa">Placa</Label>
+                        <Input type="text" id="placa" name="placa"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="modelo">Modelo</Label>
+                        <Input type="text" id="modelo" name="modelo"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="marca">Marca</Label>
+                        <Input type="text" id="marca" name="marca"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="color">Color</Label>
+                        <Input type="text" id="color" name="color"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="precio">Precio</Label>
+                        <Input type="email" id="precio" name="precio"></Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="descripcion">Descripcion</Label>
+                        <Input type="text" id="descripcion" name="descripcion"></Input>
+                    </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                    <Button className="btn btn-dark" onClick={""}>Insertar datos</Button>
+                    <Button className="btn btn-dark" onClick={closeModalDevoice}>Cerrar</Button>
+                </ModalFooter>
+            </Modal> */}
+        </div>  
+      </div>
+
+      {/* Tablas */}
       <Container fluid>
         <Row>
           <Col md="12">
@@ -178,6 +341,7 @@ function TableList() {
               </Card.Body>
             </Card>
           </Col>
+
           <Col md="12">
             <Card className="card-plain table-plain-bg">
               <Card.Header>
@@ -190,7 +354,7 @@ function TableList() {
                 <Table className="table-hover">
                   <thead>
                     <tr>
-                      <th className="border-0">NRO comprobante</th>
+                      <th className="border-0">Nro comprobante</th>
                       <th className="border-0">Fecha</th>
                       <th className="border-0">Cliente</th>
                       <th className="border-0">Forma de pago</th>
