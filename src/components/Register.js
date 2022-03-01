@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
-import ciudades from 'utils/ciudades'
+import {ciudades} from 'utils/ciudades'
 import AxiosApi from '../utils/api'
 
 export const Register = () => { 
