@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Badge, Button, Card, Form, Navbar, Nav, Container, Row, Col} from "react-bootstrap";
 import Swal from "sweetalert2";
 import AxiosApi from "utils/api";
-import ciudades from "utils/ciudades";
+import {ciudades} from "utils/ciudades";
 
 
 
